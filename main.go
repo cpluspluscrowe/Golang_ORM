@@ -5,33 +5,31 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-type Product struct {
+type Highlight struct {
 	gorm.Model
-	Code  string
-	Price uint
+	Id       int `gorm:"primary_key"`
+	Text     string
+	Url      string
+	BookName string
+	IsPosted int
 }
 
 func main() {
-	db, err := gorm.Open("sqlite3", "test.db")
+	db, err := gorm.Open("sqlite3", "highlightTweets.db")
 	if err != nil {
 		panic("failed to connect database")
 	}
 	defer db.Close()
 
-	// Migrate the schema
-	db.AutoMigrate(&Product{})
+	db.AutoMigrate(&Highlight{})
 
-	// Create
-	db.Create(&Product{Code: "L1212", Price: 1000})
+	db.Create(&Highlight{Text: "Storing ORM data", Url: "www.google.com", BookName: "book of hard knocks", IsPosted: 0})
 
-	// Read
-	var product Product
-	db.First(&product, 1)                   // find product with id 1
-	db.First(&product, "code = ?", "L1212") // find product with code l1212
+	var highlight Highlight
+	//	db.First(&highlight, 1)                     // find product with id 1
+	//	db.First(&highlight, "bookname = ?", "yes") // find product with code l1212
 
-	// Update - update product's price to 2000
-	db.Model(&product).Update("Price", 2000)
+	//db.Model(&highlight).Update("Price", 2000)
 
-	// Delete - delete product
-	db.Delete(&product)
+	db.Delete(&highlight)
 }
