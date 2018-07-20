@@ -12,8 +12,10 @@ type Highlight struct {
 	Posted int
 }
 
+var prodDbName string = "highlightTweets.db"
+
 func main() {
-	db, err := gorm.Open("sqlite3", "highlightTweets.db")
+	db, err := gorm.Open("sqlite3", prodDbName)
 	if err != nil {
 		panic("failed to connect database")
 	}
@@ -33,8 +35,22 @@ func main() {
 
 }
 
+func Insert(highlight Highlight) {
+	insert(highlight, prodDbName)
+}
+
 func GetUnpostedHighlights() []Highlight {
-	return getUnposted("highlightTweets.db")
+	return getUnposted(prodDbName)
+}
+
+func insert(highlight Highlight, dbName string) {
+	db, err := gorm.Open("sqlite3", prodDbName)
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	db.Create(highlight)
 }
 
 func getUnposted(dbName string) []Highlight {
