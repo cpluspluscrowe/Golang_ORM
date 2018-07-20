@@ -44,7 +44,7 @@ func GetUnpostedHighlights() []Highlight {
 }
 
 func insert(highlight Highlight, dbName string) {
-	db, err := gorm.Open("sqlite3", prodDbName)
+	db, err := gorm.Open("sqlite3", dbName)
 	if err != nil {
 		panic("failed to connect database")
 	}
