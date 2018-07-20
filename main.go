@@ -22,13 +22,10 @@ func main() {
 
 	db.AutoMigrate(&Highlight{})
 
-	db.Create(&Highlight{Text: "Storing ORM data", Url: "www.google.com", Book: "book of hard knocks", Posted: 0})
+	db.Create(&Highlight{Text: "Storing ORM data", Url: "www.google.com", Book: "book of hard knocks", Posted: 1})
 
 	var highlight Highlight
-	db.First(&highlight)
-	fmt.Println(highlight)
-
-	db.Where("posted = ?", 0).Find(&highlight)
+	db.Where("posted = ?", 0).First(&highlight)
 	fmt.Println(highlight)
 	//	db.First(&highlight, 1)                     // find product with id 1
 	//	db.First(&highlight, "bookname = ?", "yes") // find product with code l1212
