@@ -44,8 +44,6 @@ func TestGetUnposted(t *testing.T) {
 	db.Create(&Highlight{Text: "", Url: "", Book: "", Posted: 0})
 
 	highlights := getUnposted(dbTestName)
-	fmt.Println(highlights)
-	fmt.Println(len(highlights))
 	if len(highlights) != 2 {
 		t.Errorf("Did not find two unposted highlights")
 	}
@@ -53,9 +51,8 @@ func TestGetUnposted(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-
 	highlight1 := Highlight{Text: "text", Url: "www.google.com", Book: "book of hard knocks", Posted: 0}
-	highlight2 := Highlight{Text: "text", Url: "www.google.com2", Book: "book of hard knocks2", Posted: 0}
+	highlight2 := Highlight{Text: "text2", Url: "www.google.com2", Book: "book of hard knocks2", Posted: 0}
 
 	insert(highlight1, dbTestName)
 	insert(highlight2, dbTestName)
@@ -73,4 +70,27 @@ func TestInsert(t *testing.T) {
 
 	db.Delete(&highlight1)
 	db.Delete(&highlight2)
+}
+
+func TestSetAllPostsAsPosted(t *testing.T) {
+	highlight1 := Highlight{Text: "text", Url: "www.google.com", Book: "book of hard knocks", Posted: 0}
+	highlight2 := Highlight{Text: "text2", Url: "www.google.com2", Book: "book of hard knocks2", Posted: 0}
+
+	insert(highlight1, dbTestName)
+	insert(highlight2, dbTestName)
+	setAllHighlightsAsPosted(dbTestName)
+
+	highlights := getUnposted(dbTestName)
+	if len(highlights) != 0 {
+		fmt.Println(highlights)
+		t.Errorf("Found highlights that have not been posted: found %d", len(highlights))
+	}
+
+	db, err := gorm.Open("sqlite3", dbTestName)
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+	db.Delete(highlight1)
+	db.Delete(highlight2)
 }
