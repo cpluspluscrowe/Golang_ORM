@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
@@ -26,11 +25,26 @@ func main() {
 
 	var highlight Highlight
 	db.Where("posted = ?", 0).First(&highlight)
-	fmt.Println(highlight)
+
 	//	db.First(&highlight, 1)                     // find product with id 1
 	//	db.First(&highlight, "bookname = ?", "yes") // find product with code l1212
 
 	//db.Model(&highlight).Update("Price", 2000)
 
-	db.Delete(&highlight)
+}
+
+func GetUnpostedHighlights() []Highlight {
+	return getUnposted("highlightTweets.db")
+}
+
+func getUnposted(dbName string) []Highlight {
+	db, err := gorm.Open("sqlite3", dbName)
+	if err != nil {
+		panic("failed to connect database")
+	}
+	defer db.Close()
+
+	var highlights []Highlight
+	db.Where("posted = ?", 0).Find(&highlights)
+	return highlights
 }
